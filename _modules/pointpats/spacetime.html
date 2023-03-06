@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pointpats.spacetime &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pointpats.spacetime</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Methods for identifying space-time interaction in spatio-temporal event</span>
+<span class="sd">data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Nicholas Malizia &lt;nmalizia@asu.edu&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;Sergio J. Rey </span><span class="se">\</span>
+<span class="s2">&lt;srey@asu.edu&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;Philip Stephens &lt;philip.stephens@asu.edu&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SpaceTimeEvents&#39;</span><span class="p">,</span> <span class="s1">&#39;knox&#39;</span><span class="p">,</span> <span class="s1">&#39;mantel&#39;</span><span class="p">,</span> <span class="s1">&#39;jacquez&#39;</span><span class="p">,</span> <span class="s1">&#39;modified_knox&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">libpysal</span> <span class="k">as</span> <span class="nn">lps</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">from</span> <span class="nn">libpysal</span> <span class="kn">import</span> <span class="n">cg</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
+<div class="viewcode-block" id="SpaceTimeEvents"><a class="viewcode-back" href="../../generated/pointpats.SpaceTimeEvents.html#pointpats.SpaceTimeEvents">[docs]</a><span class="k">class</span> <span class="nc">SpaceTimeEvents</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for reformatting event data stored in a shapefile for use in</span>
+<span class="sd">    calculating metrics of spatio-temporal interaction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path            : string</span>
+<span class="sd">                      the path to the appropriate shapefile, including the</span>
+<span class="sd">                      file name and extension</span>
+<span class="sd">    time            : string</span>
+<span class="sd">                      column header in the DBF file indicating the column</span>
+<span class="sd">                      containing the time stamp.</span>
+<span class="sd">    infer_timestamp : bool, optional</span>
+<span class="sd">                      if the column containing the timestamp is formatted as</span>
+<span class="sd">                      calendar dates, try to coerce them into Python datetime</span>
+<span class="sd">                      objects (the default is False).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n               : int</span>
+<span class="sd">                      number of events.</span>
+<span class="sd">    x               : array</span>
+<span class="sd">                      (n, 1), array of the x coordinates for the events.</span>
+<span class="sd">    y               : array</span>
+<span class="sd">                      (n, 1), array of the y coordinates for the events.</span>
+<span class="sd">    t               : array</span>
+<span class="sd">                      (n, 1), array of the temporal coordinates for the events.</span>
+<span class="sd">    space           : array</span>
+<span class="sd">                      (n, 2), array of the spatial coordinates (x,y) for the</span>
+<span class="sd">                      events.</span>
+<span class="sd">    time            : array</span>
+<span class="sd">                      (n, 2), array of the temporal coordinates (t,1) for the</span>
+<span class="sd">                      events, the second column is a vector of ones.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Read in the example shapefile data, ensuring to omit the file</span>
+<span class="sd">    extension. In order to successfully create the event data the .dbf file</span>
+<span class="sd">    associated with the shapefile should have a column of values that are a</span>
+<span class="sd">    timestamp for the events. This timestamp may be a numerical value</span>
+<span class="sd">    or a date. Date inference was added in version 1.6.</span>
+
+<span class="sd">    &gt;&gt;&gt; import libpysal as lps</span>
+<span class="sd">    &gt;&gt;&gt; path = lps.examples.get_path(&quot;burkitt.shp&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; from pointpats import SpaceTimeEvents</span>
+
+<span class="sd">    Create an instance of SpaceTimeEvents from a shapefile, where the</span>
+<span class="sd">    temporal information is stored in a column named &quot;T&quot;.</span>
+
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path,&#39;T&#39;)</span>
+
+<span class="sd">    See how many events are in the instance.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.n</span>
+<span class="sd">    188</span>
+
+<span class="sd">    Check the spatial coordinates of the first event.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.space[0]</span>
+<span class="sd">    array([300., 302.])</span>
+
+<span class="sd">    Check the time of the first event.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.t[0]</span>
+<span class="sd">    array([413.])</span>
+
+<span class="sd">    Calculate the time difference between the first two events.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.t[1] - events.t[0]</span>
+<span class="sd">    array([59.])</span>
+
+<span class="sd">    New, in 1.6, date support:</span>
+<span class="sd">    Now, create an instance of SpaceTimeEvents from a shapefile, where the</span>
+<span class="sd">    temporal information is stored in a column named &quot;DATE&quot;.</span>
+
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path,&#39;DATE&#39;)</span>
+
+<span class="sd">    See how many events are in the instance.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.n</span>
+<span class="sd">    188</span>
+
+<span class="sd">    Check the spatial coordinates of the first event.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.space[0]</span>
+<span class="sd">    array([300., 302.])</span>
+
+<span class="sd">    Check the time of the first event. Note that this value is equivalent to</span>
+<span class="sd">    413 days after January 1, 1900.</span>
+
+<span class="sd">    &gt;&gt;&gt; events.t[0][0]</span>
+<span class="sd">    datetime.date(1901, 2, 16)</span>
+
+<span class="sd">    Calculate the time difference between the first two events.</span>
+
+<span class="sd">    &gt;&gt;&gt; (events.t[1][0] - events.t[0][0]).days</span>
+<span class="sd">    59</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SpaceTimeEvents.__init__"><a class="viewcode-back" href="../../generated/pointpats.SpaceTimeEvents.html#pointpats.SpaceTimeEvents.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">infer_timestamp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">shp</span> <span class="o">=</span> <span class="n">lps</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">dbf_tail</span> <span class="o">=</span> <span class="n">tail</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.dbf&quot;</span>
+        <span class="n">dbf</span> <span class="o">=</span> <span class="n">lps</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lps</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">dbf_tail</span><span class="p">))</span>
+
+        <span class="c1"># extract the spatial coordinates from the shapefile</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">shp</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">shp</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shp</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+
+        <span class="c1"># extract the temporal information from the database</span>
+        <span class="k">if</span> <span class="n">infer_timestamp</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">dbf</span><span class="o">.</span><span class="n">by_col</span><span class="p">(</span><span class="n">time_col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">date</span><span class="p">):</span>
+                <span class="n">day1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d</span> <span class="o">-</span> <span class="n">day1</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to parse your time column as Python datetime </span><span class="se">\</span>
+<span class="s2">                      objects, proceeding as integers.&quot;</span><span class="p">)</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dbf</span><span class="o">.</span><span class="n">by_col</span><span class="p">(</span><span class="n">time_col</span><span class="p">))</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+        <span class="c1"># close open objects</span>
+        <span class="n">dbf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">shp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="knox"><a class="viewcode-back" href="../../generated/pointpats.knox.html#pointpats.knox">[docs]</a><span class="k">def</span> <span class="nf">knox</span><span class="p">(</span><span class="n">s_coords</span><span class="p">,</span> <span class="n">t_coords</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">permutations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Knox test for spatio-temporal interaction. :cite:`Knox:1964`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s_coords        : array</span>
+<span class="sd">                      (n, 2), spatial coordinates.</span>
+<span class="sd">    t_coords        : array</span>
+<span class="sd">                      (n, 1), temporal coordinates.</span>
+<span class="sd">    delta           : float</span>
+<span class="sd">                      threshold for proximity in space.</span>
+<span class="sd">    tau             : float</span>
+<span class="sd">                      threshold for proximity in time.</span>
+<span class="sd">    permutations    : int, optional</span>
+<span class="sd">                      the number of permutations used to establish pseudo-</span>
+<span class="sd">                      significance (the default is 99).</span>
+<span class="sd">    debug           : bool, optional</span>
+<span class="sd">                      if true, debugging information is printed (the default is</span>
+<span class="sd">                      False).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    knox_result     : dictionary</span>
+<span class="sd">                      contains the statistic (stat) for the test and the</span>
+<span class="sd">                      associated p-value (pvalue).</span>
+<span class="sd">    stat            : float</span>
+<span class="sd">                      value of the knox test for the dataset.</span>
+<span class="sd">    pvalue          : float</span>
+<span class="sd">                      pseudo p-value associated with the statistic.</span>
+<span class="sd">    counts          : int</span>
+<span class="sd">                      count of space time neighbors.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal as lps</span>
+<span class="sd">    &gt;&gt;&gt; from pointpats import SpaceTimeEvents, knox</span>
+
+<span class="sd">    Read in the example data and create an instance of SpaceTimeEvents.</span>
+
+<span class="sd">    &gt;&gt;&gt; path = lps.examples.get_path(&quot;burkitt.shp&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path,&#39;T&#39;)</span>
+
+<span class="sd">    Set the random seed generator. This is used by the permutation based</span>
+<span class="sd">    inference to replicate the pseudo-significance of our example results -</span>
+<span class="sd">    the end-user will normally omit this step.</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
+
+<span class="sd">    Run the Knox test with distance and time thresholds of 20 and 5,</span>
+<span class="sd">    respectively. This counts the events that are closer than 20 units in</span>
+<span class="sd">    space, and 5 units in time.</span>
+
+<span class="sd">    &gt;&gt;&gt; result = knox(events.space, events.t, delta=20, tau=5, permutations=99)</span>
+
+<span class="sd">    Next, we examine the results. First, we call the statistic from the</span>
+<span class="sd">    results dictionary. This reports that there are 13 events close</span>
+<span class="sd">    in both space and time, according to our threshold definitions.</span>
+
+<span class="sd">    &gt;&gt;&gt; result[&#39;stat&#39;] == 13</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Next, we look at the pseudo-significance of this value, calculated by</span>
+<span class="sd">    permuting the timestamps and rerunning the statistics. In this case,</span>
+<span class="sd">    the results indicate there is likely no space-time interaction between</span>
+<span class="sd">    the events.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;%2.2f&quot;%result[&#39;pvalue&#39;])</span>
+<span class="sd">    0.17</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Do a kdtree on space first as the number of ties (identical points) is</span>
+    <span class="c1"># likely to be lower for space than time.</span>
+
+    <span class="n">kd_s</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">KDTree</span><span class="p">(</span><span class="n">s_coords</span><span class="p">)</span>
+    <span class="n">neigh_s</span> <span class="o">=</span> <span class="n">kd_s</span><span class="o">.</span><span class="n">query_pairs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+    <span class="n">tau2</span> <span class="o">=</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">tau</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">neigh_s</span><span class="p">))</span>
+
+    <span class="c1"># For the neighboring pairs in space, determine which are also time</span>
+    <span class="c1"># neighbors</span>
+
+    <span class="n">d_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_coords</span><span class="p">[</span><span class="n">ids</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">t_coords</span><span class="p">[</span><span class="n">ids</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">n_st</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d_t</span> <span class="o">&lt;=</span> <span class="n">tau2</span><span class="p">)</span>
+
+    <span class="n">knox_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stat&#39;</span><span class="p">:</span> <span class="n">n_st</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+
+    <span class="k">if</span> <span class="n">permutations</span><span class="p">:</span>
+        <span class="n">joint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">permutations</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">permutations</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">t_coords</span><span class="p">)</span>
+            <span class="n">d_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_coords</span><span class="p">[</span><span class="n">ids</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">t_coords</span><span class="p">[</span><span class="n">ids</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="n">joint</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">d_t</span> <span class="o">&lt;=</span> <span class="n">tau2</span><span class="p">)</span>
+
+        <span class="n">larger</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">joint</span> <span class="o">&gt;=</span> <span class="n">n_st</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">permutations</span> <span class="o">-</span> <span class="n">larger</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">larger</span><span class="p">:</span>
+            <span class="n">larger</span> <span class="o">=</span> <span class="n">permutations</span> <span class="o">-</span> <span class="n">larger</span>
+        <span class="n">p_sim</span> <span class="o">=</span> <span class="p">(</span><span class="n">larger</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">permutations</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+        <span class="n">knox_result</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_sim</span>
+    <span class="k">return</span> <span class="n">knox_result</span></div>
+
+
+<div class="viewcode-block" id="mantel"><a class="viewcode-back" href="../../generated/pointpats.mantel.html#pointpats.mantel">[docs]</a><span class="k">def</span> <span class="nf">mantel</span><span class="p">(</span><span class="n">s_coords</span><span class="p">,</span> <span class="n">t_coords</span><span class="p">,</span> <span class="n">permutations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">scon</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">spow</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tcon</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tpow</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standardized Mantel test for spatio-temporal interaction. :cite:`Mantel:1967`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s_coords        : array</span>
+<span class="sd">                      (n, 2), spatial coordinates.</span>
+<span class="sd">    t_coords        : array</span>
+<span class="sd">                      (n, 1), temporal coordinates.</span>
+<span class="sd">    permutations    : int, optional</span>
+<span class="sd">                      the number of permutations used to establish pseudo-</span>
+<span class="sd">                      significance (the default is 99).</span>
+<span class="sd">    scon            : float, optional</span>
+<span class="sd">                      constant added to spatial distances (the default is 1.0).</span>
+<span class="sd">    spow            : float, optional</span>
+<span class="sd">                      value for power transformation for spatial distances</span>
+<span class="sd">                      (the default is -1.0).</span>
+<span class="sd">    tcon            : float, optional</span>
+<span class="sd">                      constant added to temporal distances (the default is 1.0).</span>
+<span class="sd">    tpow            : float, optional</span>
+<span class="sd">                      value for power transformation for temporal distances</span>
+<span class="sd">                      (the default is -1.0).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mantel_result   : dictionary</span>
+<span class="sd">                      contains the statistic (stat) for the test and the</span>
+<span class="sd">                      associated p-value (pvalue).</span>
+<span class="sd">    stat            : float</span>
+<span class="sd">                      value of the knox test for the dataset.</span>
+<span class="sd">    pvalue          : float</span>
+<span class="sd">                      pseudo p-value associated with the statistic.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal as lps</span>
+<span class="sd">    &gt;&gt;&gt; from pointpats import SpaceTimeEvents, mantel</span>
+
+<span class="sd">    Read in the example data and create an instance of SpaceTimeEvents.</span>
+
+<span class="sd">    &gt;&gt;&gt; path = lps.examples.get_path(&quot;burkitt.shp&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path,&#39;T&#39;)</span>
+
+<span class="sd">    Set the random seed generator. This is used by the permutation based</span>
+<span class="sd">    inference to replicate the pseudo-significance of our example results -</span>
+<span class="sd">    the end-user will normally omit this step.</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
+
+<span class="sd">    The standardized Mantel test is a measure of matrix correlation between</span>
+<span class="sd">    the spatial and temporal distance matrices of the event dataset. The</span>
+<span class="sd">    following example runs the standardized Mantel test without a constant</span>
+<span class="sd">    or transformation; however, as recommended by :cite:`Mantel:1967`, these</span>
+<span class="sd">    should be added by the user. This can be done by adjusting the constant</span>
+<span class="sd">    and power parameters.</span>
+
+<span class="sd">    &gt;&gt;&gt; result = mantel(events.space, events.t, 99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0)</span>
+
+<span class="sd">    Next, we examine the result of the test.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;%6.6f&quot;%result[&#39;stat&#39;])</span>
+<span class="sd">    0.048368</span>
+
+<span class="sd">    Finally, we look at the pseudo-significance of this value, calculated by</span>
+<span class="sd">    permuting the timestamps and rerunning the statistic for each of the 99</span>
+<span class="sd">    permutations. According to these parameters, the results indicate</span>
+<span class="sd">    space-time interaction between the events.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;%2.2f&quot;%result[&#39;pvalue&#39;])</span>
+<span class="sd">    0.01</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t_coords</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s_coords</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># calculate the spatial and temporal distance matrices for the events</span>
+    <span class="n">distmat</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">timemat</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># calculate the transformed standardized statistic</span>
+    <span class="n">timevec</span> <span class="o">=</span> <span class="p">(</span><span class="n">timemat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="n">timemat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">tcon</span><span class="p">)</span> <span class="o">**</span> <span class="n">tpow</span>
+    <span class="n">distvec</span> <span class="o">=</span> <span class="p">(</span><span class="n">distmat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="n">distmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">scon</span><span class="p">)</span> <span class="o">**</span> <span class="n">spow</span>
+    <span class="n">stat</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">timevec</span><span class="p">,</span> <span class="n">distvec</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># return the results (if no inference)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">permutations</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stat</span>
+
+    <span class="c1"># loop for generating a random distribution to assess significance</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">permutations</span><span class="p">):</span>
+        <span class="n">trand</span> <span class="o">=</span> <span class="n">_shuffle_matrix</span><span class="p">(</span><span class="n">timemat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">timevec</span> <span class="o">=</span> <span class="p">(</span><span class="n">trand</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="n">trand</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">tcon</span><span class="p">)</span> <span class="o">**</span> <span class="n">tpow</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">timevec</span><span class="p">,</span> <span class="n">distvec</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">dist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="c1">## establish the pseudo significance of the observed statistic</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+    <span class="n">greater</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_greater_equal</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">stat</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">count_masked</span><span class="p">(</span><span class="n">greater</span><span class="p">)</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">permutations</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># report the results</span>
+    <span class="n">mantel_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stat&#39;</span><span class="p">:</span> <span class="n">stat</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">:</span> <span class="n">pvalue</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">mantel_result</span></div>
+
+
+<div class="viewcode-block" id="jacquez"><a class="viewcode-back" href="../../generated/pointpats.jacquez.html#pointpats.jacquez">[docs]</a><span class="k">def</span> <span class="nf">jacquez</span><span class="p">(</span><span class="n">s_coords</span><span class="p">,</span> <span class="n">t_coords</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">permutations</span><span class="o">=</span><span class="mi">99</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Jacquez k nearest neighbors test for spatio-temporal interaction.</span>
+<span class="sd">    :cite:`Jacquez:1996`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s_coords        : array</span>
+<span class="sd">                      (n, 2), spatial coordinates.</span>
+<span class="sd">    t_coords        : array</span>
+<span class="sd">                      (n, 1), temporal coordinates.</span>
+<span class="sd">    k               : int</span>
+<span class="sd">                      the number of nearest neighbors to be searched.</span>
+<span class="sd">    permutations    : int, optional</span>
+<span class="sd">                      the number of permutations used to establish pseudo-</span>
+<span class="sd">                      significance (the default is 99).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    jacquez_result  : dictionary</span>
+<span class="sd">                      contains the statistic (stat) for the test and the</span>
+<span class="sd">                      associated p-value (pvalue).</span>
+<span class="sd">    stat            : float</span>
+<span class="sd">                      value of the Jacquez k nearest neighbors test for the</span>
+<span class="sd">                      dataset.</span>
+<span class="sd">    pvalue          : float</span>
+<span class="sd">                      p-value associated with the statistic (normally</span>
+<span class="sd">                      distributed with k-1 df).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal as lps</span>
+<span class="sd">    &gt;&gt;&gt; from pointpats import SpaceTimeEvents, jacquez</span>
+
+<span class="sd">    Read in the example data and create an instance of SpaceTimeEvents.</span>
+
+<span class="sd">    &gt;&gt;&gt; path = lps.examples.get_path(&quot;burkitt.shp&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path,&#39;T&#39;)</span>
+
+<span class="sd">    The Jacquez test counts the number of events that are k nearest</span>
+<span class="sd">    neighbors in both time and space. The following runs the Jacquez test</span>
+<span class="sd">    on the example data and reports the resulting statistic. In this case,</span>
+<span class="sd">    there are 13 instances where events are nearest neighbors in both space</span>
+<span class="sd">    and time.</span>
+<span class="sd">    # turning off as kdtree changes from scipy &lt; 0.12 return 13</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
+<span class="sd">    &gt;&gt;&gt; result = jacquez(events.space, events.t ,k=3,permutations=99)</span>
+<span class="sd">    &gt;&gt;&gt; print(result[&#39;stat&#39;])</span>
+<span class="sd">    13</span>
+
+<span class="sd">    The significance of this can be assessed by calling the p-</span>
+<span class="sd">    value from the results dictionary, as shown below. Again, no</span>
+<span class="sd">    space-time interaction is observed.</span>
+
+<span class="sd">    &gt;&gt;&gt; result[&#39;pvalue&#39;] &lt; 0.01</span>
+<span class="sd">    False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">t_coords</span>
+    <span class="n">space</span> <span class="o">=</span> <span class="n">s_coords</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="c1"># calculate the nearest neighbors in space and time separately</span>
+    <span class="n">knnt</span> <span class="o">=</span> <span class="n">lps</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">KNN</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">knns</span> <span class="o">=</span> <span class="n">lps</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">KNN</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="n">nnt</span> <span class="o">=</span> <span class="n">knnt</span><span class="o">.</span><span class="n">neighbors</span>
+    <span class="n">nns</span> <span class="o">=</span> <span class="n">knns</span><span class="o">.</span><span class="n">neighbors</span>
+    <span class="n">knn_sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># determine which events are nearest neighbors in both space and time</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">t_neighbors</span> <span class="o">=</span> <span class="n">nnt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">s_neighbors</span> <span class="o">=</span> <span class="n">nns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">t_neighbors</span><span class="p">)</span>
+        <span class="n">inter</span> <span class="o">=</span> <span class="n">check</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s_neighbors</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inter</span><span class="p">)</span>
+        <span class="n">knn_sum</span> <span class="o">+=</span> <span class="n">count</span>
+
+    <span class="n">stat</span> <span class="o">=</span> <span class="n">knn_sum</span>
+
+    <span class="c1"># return the results (if no inference)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">permutations</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stat</span>
+
+    <span class="c1"># loop for generating a random distribution to assess significance</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">permutations</span><span class="p">):</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">trand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">knnt</span> <span class="o">=</span> <span class="n">lps</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">KNN</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">trand</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">nnt</span> <span class="o">=</span> <span class="n">knnt</span><span class="o">.</span><span class="n">neighbors</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">t_neighbors</span> <span class="o">=</span> <span class="n">nnt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">s_neighbors</span> <span class="o">=</span> <span class="n">nns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">t_neighbors</span><span class="p">)</span>
+            <span class="n">inter</span> <span class="o">=</span> <span class="n">check</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s_neighbors</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inter</span><span class="p">)</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="n">count</span>
+
+        <span class="n">dist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+    <span class="c1"># establish the pseudo significance of the observed statistic</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+    <span class="n">greater</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_greater_equal</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">stat</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">count_masked</span><span class="p">(</span><span class="n">greater</span><span class="p">)</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">permutations</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># report the results</span>
+    <span class="n">jacquez_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stat&#39;</span><span class="p">:</span> <span class="n">stat</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">:</span> <span class="n">pvalue</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">jacquez_result</span></div>
+
+
+<div class="viewcode-block" id="modified_knox"><a class="viewcode-back" href="../../generated/pointpats.modified_knox.html#pointpats.modified_knox">[docs]</a><span class="k">def</span> <span class="nf">modified_knox</span><span class="p">(</span><span class="n">s_coords</span><span class="p">,</span> <span class="n">t_coords</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">permutations</span><span class="o">=</span><span class="mi">99</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Baker&#39;s modified Knox test for spatio-temporal interaction.</span>
+<span class="sd">    :cite:`Baker:2004`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s_coords        : array</span>
+<span class="sd">                      (n, 2), spatial coordinates.</span>
+<span class="sd">    t_coords        : array</span>
+<span class="sd">                      (n, 1), temporal coordinates.</span>
+<span class="sd">    delta           : float</span>
+<span class="sd">                      threshold for proximity in space.</span>
+<span class="sd">    tau             : float</span>
+<span class="sd">                      threshold for proximity in time.</span>
+<span class="sd">    permutations    : int, optional</span>
+<span class="sd">                      the number of permutations used to establish pseudo-</span>
+<span class="sd">                      significance (the default is 99).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    modknox_result  : dictionary</span>
+<span class="sd">                      contains the statistic (stat) for the test and the</span>
+<span class="sd">                      associated p-value (pvalue).</span>
+<span class="sd">    stat            : float</span>
+<span class="sd">                      value of the modified knox test for the dataset.</span>
+<span class="sd">    pvalue          : float</span>
+<span class="sd">                      pseudo p-value associated with the statistic.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal as lps</span>
+<span class="sd">    &gt;&gt;&gt; from pointpats import SpaceTimeEvents, modified_knox</span>
+
+<span class="sd">    Read in the example data and create an instance of SpaceTimeEvents.</span>
+
+<span class="sd">    &gt;&gt;&gt; path = lps.examples.get_path(&quot;burkitt.shp&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; events = SpaceTimeEvents(path, &#39;T&#39;)</span>
+
+<span class="sd">    Set the random seed generator. This is used by the permutation based</span>
+<span class="sd">    inference to replicate the pseudo-significance of our example results -</span>
+<span class="sd">    the end-user will normally omit this step.</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
+
+<span class="sd">    Run the modified Knox test with distance and time thresholds of 20 and 5,</span>
+<span class="sd">    respectively. This counts the events that are closer than 20 units in</span>
+<span class="sd">    space, and 5 units in time.</span>
+
+<span class="sd">    &gt;&gt;&gt; result = modified_knox(events.space, events.t, delta=20, tau=5, permutations=99)</span>
+
+<span class="sd">    Next, we examine the results. First, we call the statistic from the</span>
+<span class="sd">    results dictionary. This reports the difference between the observed</span>
+<span class="sd">    and expected Knox statistic.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;%2.8f&quot; % result[&#39;stat&#39;])</span>
+<span class="sd">    2.81016043</span>
+
+<span class="sd">    Next, we look at the pseudo-significance of this value, calculated by</span>
+<span class="sd">    permuting the timestamps and rerunning the statistics. In this case,</span>
+<span class="sd">    the results indicate there is likely no space-time interaction.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;%2.2f&quot; % result[&#39;pvalue&#39;])</span>
+<span class="sd">    0.11</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s_coords</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t_coords</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># calculate the spatial and temporal distance matrices for the events</span>
+    <span class="n">sdistmat</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">tdistmat</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># identify events within thresholds</span>
+    <span class="n">spacmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">spacbin</span> <span class="o">=</span> <span class="n">sdistmat</span> <span class="o">&lt;=</span> <span class="n">delta</span>
+    <span class="n">spacmat</span> <span class="o">=</span> <span class="n">spacmat</span> <span class="o">*</span> <span class="n">spacbin</span>
+    <span class="n">timemat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">timebin</span> <span class="o">=</span> <span class="n">tdistmat</span> <span class="o">&lt;=</span> <span class="n">tau</span>
+    <span class="n">timemat</span> <span class="o">=</span> <span class="n">timemat</span> <span class="o">*</span> <span class="n">timebin</span>
+
+    <span class="c1"># calculate the observed (original) statistic</span>
+    <span class="n">knoxmat</span> <span class="o">=</span> <span class="n">timemat</span> <span class="o">*</span> <span class="n">spacmat</span>
+    <span class="n">obsstat</span> <span class="o">=</span> <span class="p">(</span><span class="n">knoxmat</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># calculate the expectated value</span>
+    <span class="n">ssumvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">spacbin</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">tsumvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">timebin</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">expstat</span> <span class="o">=</span> <span class="p">(</span><span class="n">ssumvec</span> <span class="o">*</span> <span class="n">tsumvec</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># calculate the modified stat</span>
+    <span class="n">stat</span> <span class="o">=</span> <span class="p">(</span><span class="n">obsstat</span> <span class="o">-</span> <span class="p">(</span><span class="n">expstat</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="c1"># return results (if no inference)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">permutations</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stat</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># loop for generating a random distribution to assess significance</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">permutations</span><span class="p">):</span>
+        <span class="n">rtdistmat</span> <span class="o">=</span> <span class="n">_shuffle_matrix</span><span class="p">(</span><span class="n">tdistmat</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+        <span class="n">timemat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="n">timebin</span> <span class="o">=</span> <span class="n">rtdistmat</span> <span class="o">&lt;=</span> <span class="n">tau</span>
+        <span class="n">timemat</span> <span class="o">=</span> <span class="n">timemat</span> <span class="o">*</span> <span class="n">timebin</span>
+
+        <span class="c1"># calculate the observed knox again</span>
+        <span class="n">knoxmat</span> <span class="o">=</span> <span class="n">timemat</span> <span class="o">*</span> <span class="n">spacmat</span>
+        <span class="n">obsstat</span> <span class="o">=</span> <span class="p">(</span><span class="n">knoxmat</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># calculate the expectated value again</span>
+        <span class="n">ssumvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">spacbin</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">tsumvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">timebin</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">expstat</span> <span class="o">=</span> <span class="p">(</span><span class="n">ssumvec</span> <span class="o">*</span> <span class="n">tsumvec</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="c1"># calculate the modified stat</span>
+        <span class="n">tempstat</span> <span class="o">=</span> <span class="p">(</span><span class="n">obsstat</span> <span class="o">-</span> <span class="p">(</span><span class="n">expstat</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">distribution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tempstat</span><span class="p">)</span>
+
+    <span class="c1"># establish the pseudo significance of the observed statistic</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
+    <span class="n">greater</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_greater_equal</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">stat</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">count_masked</span><span class="p">(</span><span class="n">greater</span><span class="p">)</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">permutations</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># return results</span>
+    <span class="n">modknox_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stat&#39;</span><span class="p">:</span> <span class="n">stat</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">:</span> <span class="n">pvalue</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">modknox_result</span></div>
+
+<span class="k">def</span> <span class="nf">_shuffle_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Random permutation of rows and columns of a matrix</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X   : array</span>
+<span class="sd">          (k, k), array to be permuted.</span>
+<span class="sd">    ids : array</span>
+<span class="sd">          range (k, ).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        : array</span>
+<span class="sd">          (k, k) with rows and columns randomly shuffled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">ids</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">ids</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
